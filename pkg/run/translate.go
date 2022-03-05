@@ -2,7 +2,6 @@ package run
 
 import (
 	"bufio"
-	"encoding/hex"
 	"fmt"
 	"strings"
 
@@ -16,11 +15,9 @@ import (
 func Translate(cmd *cobra.Command, args []string) error {
 	_ = viper.BindPFlag(flags.FromLanguage, cmd.Flags().Lookup(flags.FromLanguage))
 	_ = viper.BindPFlag(flags.ToLanguage, cmd.Flags().Lookup(flags.ToLanguage))
-	_ = viper.BindPFlag(flags.PrintEntropy, cmd.Flags().Lookup(flags.PrintEntropy))
 
 	fromLanguage := viper.GetInt(flags.FromLanguage)
 	toLanguage := viper.GetInt(flags.ToLanguage)
-	printEntropy := viper.GetBool(flags.PrintEntropy)
 
 	switch fromLanguage {
 	case 1:
@@ -95,12 +92,6 @@ func Translate(cmd *cobra.Command, args []string) error {
 
 	if _, err := fmt.Fprintln(cmd.OutOrStdout(), mnemonic); err != nil {
 		return fmt.Errorf("failed to write to output: %w", err)
-	}
-
-	if printEntropy {
-		if _, err := fmt.Fprintln(cmd.OutOrStdout(), "entropy: ", hex.EncodeToString(entropy)); err != nil {
-			return fmt.Errorf("failed to write to output: %w", err)
-		}
 	}
 
 	return nil

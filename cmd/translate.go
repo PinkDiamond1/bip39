@@ -48,5 +48,4 @@ func init() {
 
 	f.Int(flags.FromLanguage, 1, "From language")
 	f.Int(flags.ToLanguage, 1, "To language")
-	f.Bool(flags.PrintEntropy, false, "Print entropy")
 }

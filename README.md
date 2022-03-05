@@ -87,3 +87,18 @@ Global Flags:
 
 Error: invalid mnemonic
 ```
+
+## translate mnemonics between languages
+Several wallets only support english mnemonics. Mnemonics can be translated between
+languages in the sense that the underlying entropy is preserved.
+
+```bash
+bip39 gen --language=2
+ちかい ばいばい いずみ たおる おとなしい とくべつ もくてき たりきほんがん ふっかつ うける ざいりょう むかえ むすう けもの ちいき いがい きさく こうない げぼく うわさ そそぐ こんぽん にうけ はんい
+```
+English language equivalent mnemonic can be obtained from the above mnemonic:
+```bash
+bip39 translate --from-language=2 --to-language=1
+Enter mnemonic: ちかい ばいばい いずみ たおる おとなしい とくべつ もくてき たりきほんがん ふっかつ うける ざいりょう むかえ むすう けもの ちいき いがい きさく こうない げぼく うわさ そそぐ こんぽん にうけ はんい
+napkin school another mass caution pole universe mix stay become flock tray trophy electric myth already coyote essay egg book left first quit shoot
+```
