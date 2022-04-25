@@ -28,7 +28,7 @@ var genCmd = &cobra.Command{
 	Long: `This command generates a new BIP39 mnemonic.
 The length can be 12, 15, 18, 21 or 24 words
 
-The language needs to be entered as a number:
+The language needs to be one of the following:
 1. English (default)
 2. Japanese
 3. ChineseSimplified
@@ -50,5 +50,5 @@ func init() {
 	f := genCmd.Flags()
 
 	f.Int(flags.Length, 24, "Number of words")
-	f.Int(flags.Language, 1, "Language")
+	f.String(flags.Language, "English", "Language")
 }

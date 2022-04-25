@@ -26,9 +26,9 @@ var translateCmd = &cobra.Command{
 	Use:   "translate",
 	Short: "Translate mnemonic between languages",
 	Long: `This command translates mnemonic from one language
-to another in the sense that it preserves the entropy:
+to another in the sense that it preserves the underlying entropy:
 
-The language needs to be entered as a number:
+The language needs to be one of the following:
 1. English (default)
 2. Japanese
 3. ChineseSimplified
@@ -38,6 +38,17 @@ The language needs to be entered as a number:
 7. Italian
 8. Korean
 9. Spanish
+
+Mnemonics are always reformatted using sentence fields and are not affected
+by extra white spaces. They are, however, case sensitive. For instance, following
+mnemonics are all the same. Note, how white spaces at the beginning, end or
+in between fields are ignored.
+
+"farm employ cup erosion half birth become love excite private swallow grit",
+"farm employ cup erosion half    birth become love excite private swallow grit",
+"farm employ cup erosion half birth become love excite private swallow grit    ",
+"    farm employ cup erosion half birth become love excite private swallow grit",
+"    farm employ cup     erosion half birth become love   excite private swallow grit    ",
 `,
 	RunE: run.Translate,
 }
@@ -46,6 +57,6 @@ func init() {
 	rootCmd.AddCommand(translateCmd)
 	f := translateCmd.Flags()
 
-	f.Int(flags.FromLanguage, 1, "From language")
-	f.Int(flags.ToLanguage, 1, "To language")
+	f.String(flags.FromLanguage, "English", "From language")
+	f.String(flags.ToLanguage, "English", "To language")
 }

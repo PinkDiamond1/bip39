@@ -27,7 +27,31 @@ var validateCmd = &cobra.Command{
 	Short: "Check validity of mnemonic",
 	Long: `Mnemonic is not just any arbitrary list of words.
 It has a structure (last word contains checksum) and comes from
-a predefined wordlist.`,
+a predefined wordlist.
+
+The language needs to be one of the following:
+1. English (default)
+2. Japanese
+3. ChineseSimplified
+4. ChineseTraditional
+5. Czech
+6. French
+7. Italian
+8. Korean
+9. Spanish
+
+BIP-39 proposal: https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
+
+Mnemonics are always reformatted using sentence fields and are not affected
+by extra white spaces. They are, however, case sensitive. For instance, following
+mnemonics are all the same. Note, how white spaces at the beginning, end or
+in between fields are ignored.
+
+"farm employ cup erosion half birth become love excite private swallow grit",
+"farm employ cup erosion half    birth become love excite private swallow grit",
+"farm employ cup erosion half birth become love excite private swallow grit    ",
+"    farm employ cup erosion half birth become love excite private swallow grit",
+"    farm employ cup     erosion half birth become love   excite private swallow grit    ",`,
 	RunE: run.Validate,
 	Args: cobra.ExactArgs(0),
 }
@@ -35,5 +59,5 @@ a predefined wordlist.`,
 func init() {
 	rootCmd.AddCommand(validateCmd)
 	f := validateCmd.Flags()
-	f.Int(flags.Language, 1, "Language")
+	f.String(flags.Language, "English", "Language")
 }
