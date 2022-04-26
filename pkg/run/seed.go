@@ -1,16 +1,15 @@
 package run
 
 import (
-	"bytes"
 	"encoding/hex"
 	"fmt"
-	"syscall"
+	"strings"
 
 	"github.com/kubetrail/bip39/pkg/flags"
+	"github.com/kubetrail/bip39/pkg/mnemonics"
+	"github.com/kubetrail/bip39/pkg/passphrases"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/tyler-smith/go-bip39"
-	"golang.org/x/term"
 )
 
 func Seed(cmd *cobra.Command, args []string) error {
@@ -22,56 +21,44 @@ func Seed(cmd *cobra.Command, args []string) error {
 	usePassphrase := viper.GetBool(flags.UsePassphrase)
 	skipMnemonicValidation := viper.GetBool(flags.SkipMnemonicValidation)
 
-	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Enter mnemonic: "); err != nil {
-		return fmt.Errorf("failed to write to output: %w", err)
-	}
+	var mnemonic string
+	var err error
 
-	mnemonic, err := MnemonicFromReader(cmd.InOrStdin())
-	if err != nil {
-		return fmt.Errorf("failed to read mnemonic from input: %w", err)
+	if len(args) == 0 {
+		err := mnemonics.Prompt(cmd.OutOrStdout())
+		if err != nil {
+			return fmt.Errorf("failed to prompt for mnemonic: %w", err)
+		}
+
+		mnemonic, err = mnemonics.FromReader(cmd.InOrStdin())
+		if err != nil {
+			return fmt.Errorf("failed to read mnemonic from input: %w", err)
+		}
+	} else {
+		mnemonic = strings.Join(args, " ")
 	}
 
 	if !skipMnemonicValidation {
-		mnemonic, err = TranslateMnemonic(mnemonic, language, LanguageEnglish)
+		mnemonic, err = mnemonics.Translate(mnemonic, language, mnemonics.LanguageEnglish)
 		if err != nil {
 			return fmt.Errorf("failed to translate mnemonic to English: %w", err)
 		}
 	}
 
-	var passphrase []byte
+	var passPhrase string
 	if usePassphrase {
-		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Enter secret passphrase: "); err != nil {
-			return fmt.Errorf("failed to write to output: %w", err)
-		}
-
-		passphrase, err = term.ReadPassword(syscall.Stdin)
+		passPhrase, err = passphrases.Prompt(cmd.OutOrStdout())
 		if err != nil {
-			return fmt.Errorf("failed to read secret passphrase from input: %w", err)
-		}
-		if _, err := fmt.Fprintln(cmd.OutOrStdout()); err != nil {
-			return fmt.Errorf("failed to write to output: %w", err)
-		}
-
-		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Enter secret passphrase again: "); err != nil {
-			return fmt.Errorf("failed to write to output: %w", err)
-		}
-
-		passphraseConfirm, err := term.ReadPassword(syscall.Stdin)
-		if err != nil {
-			return fmt.Errorf("failed to read secret passphrase from input: %w", err)
-		}
-
-		if _, err := fmt.Fprintln(cmd.OutOrStdout()); err != nil {
-			return fmt.Errorf("failed to write to output: %w", err)
-		}
-
-		if !bytes.Equal(passphrase, passphraseConfirm) {
-			return fmt.Errorf("passphrases do not match")
+			return fmt.Errorf("failed to prompt passphrase: %w", err)
 		}
 	}
 
-	seed := bip39.NewSeed(mnemonic, string(passphrase))
-	if _, err := fmt.Fprintln(cmd.OutOrStdout(), hex.EncodeToString(seed)); err != nil {
+	if _, err := fmt.Fprintln(
+		cmd.OutOrStdout(),
+		hex.EncodeToString(
+			mnemonics.Seed(mnemonic, passPhrase),
+		),
+	); err != nil {
 		return fmt.Errorf("failed to write to output: %w", err)
 	}
 

@@ -53,7 +53,6 @@ in between fields are ignored.
 "    farm employ cup erosion half birth become love excite private swallow grit",
 "    farm employ cup     erosion half birth become love   excite private swallow grit    ",`,
 	RunE: run.Validate,
-	Args: cobra.ExactArgs(0),
 }
 
 func init() {
