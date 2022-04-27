@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+// Status checks is STDIN is connected.
+// This can be used to switch off prompting
+// for user input assuming input is being fed
+// via STDIN pipe
 func Status() (bool, error) {
 	prompt := false
 	fi, err := os.Stdin.Stat()

@@ -24,12 +24,12 @@ func Translate(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("failed to prompt for mnemonic: %w", err)
 		}
 
-		mnemonic, err = mnemonics.FromReader(cmd.InOrStdin())
+		mnemonic, err = mnemonics.Read(cmd.InOrStdin())
 		if err != nil {
 			return fmt.Errorf("failed to read mnemonic from input: %w", err)
 		}
 	} else {
-		mnemonic = mnemonics.FromFields(args)
+		mnemonic = mnemonics.NewFromFields(args)
 	}
 
 	mnemonic, err = mnemonics.Translate(mnemonic, fromLanguage, toLanguage)

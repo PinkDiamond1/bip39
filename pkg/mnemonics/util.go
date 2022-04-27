@@ -6,11 +6,11 @@ import (
 	"io"
 	"strings"
 
-	"github.com/kubetrail/bip39/pkg/prompts"
 	"github.com/tyler-smith/go-bip39"
 	"github.com/tyler-smith/go-bip39/wordlists"
 )
 
+// SetLanguage sets language for mnemonic generation and validation
 func SetLanguage(language string) error {
 	switch strings.ToLower(language) {
 	case strings.ToLower(LanguageEnglish):
@@ -41,6 +41,8 @@ func SetLanguage(language string) error {
 	return nil
 }
 
+// New generates a new mnemonic of specified length and for
+// requested input language.
 func New(length int, language string) (string, error) {
 	if err := SetLanguage(language); err != nil {
 		return "", fmt.Errorf("failed to set language: %w", err)
@@ -66,7 +68,31 @@ func New(length int, language string) (string, error) {
 	return mnemonic, nil
 }
 
-func FromReader(r io.Reader) (string, error) {
+// NewFromFields generates a new mnemonic sentence using input
+// fields
+func NewFromFields(fields []string) string {
+	return strings.Join(
+		strings.Fields(
+			strings.Join(fields, " "),
+		),
+		" ",
+	)
+}
+
+// Prompt prompts for new mnemonic
+func Prompt(w io.Writer) error {
+	if _, err := fmt.Fprintf(w, "Enter mnemonic: "); err != nil {
+		return fmt.Errorf("failed to write to output: %w", err)
+	}
+
+	return nil
+}
+
+// Read reads a new mnemonic from input. It splits
+// input into fields and then recombines them to ensure
+// that the mnemonic is not affected by extra whitespaces
+// and/or trailing newline char
+func Read(r io.Reader) (string, error) {
 	inputReader := bufio.NewReader(r)
 	mnemonic, err := inputReader.ReadString('\n')
 	if err != nil {
@@ -78,6 +104,8 @@ func FromReader(r io.Reader) (string, error) {
 	return mnemonic, nil
 }
 
+// Translate translates mnemonic in a way that the underlying entropy
+// is preserved
 func Translate(mnemonic, fromLanguage, toLanguage string) (string, error) {
 	wordList := bip39.GetWordList()
 	defer bip39.SetWordList(wordList)
@@ -107,44 +135,36 @@ func Translate(mnemonic, fromLanguage, toLanguage string) (string, error) {
 	return mnemonic, nil
 }
 
-func Seed(mnemonic, passphrase string) []byte {
-	return bip39.NewSeed(mnemonic, passphrase)
-}
+// Validate validates mnemonic with default language to be english.
+// please note that despite language input being variadic, at most
+// only one value is accepted
+func Validate(mnemonic string, language ...string) error {
+	l := LanguageEnglish
 
-func Prompt(w io.Writer) error {
-	prompt, err := prompts.Status()
-	if err != nil {
-		return fmt.Errorf("failed to get prompt status: %w", err)
+	if len(language) > 1 {
+		return fmt.Errorf("mnemonic can only be validated for one language, received %d", len(language))
 	}
 
-	if !prompt {
-		return nil
+	if len(language) > 0 {
+		l = language[0]
 	}
 
-	if _, err := fmt.Fprintf(w, "Enter mnemonic: "); err != nil {
-		return fmt.Errorf("failed to write to output: %w", err)
-	}
-
-	return nil
-}
-
-func Validate(mnemonic, language string) error {
-	if err := SetLanguage(language); err != nil {
+	if err := SetLanguage(l); err != nil {
 		return fmt.Errorf("failed to set language: %w", err)
 	}
 
 	if !bip39.IsMnemonicValid(mnemonic) {
-		return fmt.Errorf("failed to validate mnemonic for language %s", language)
+		return fmt.Errorf("failed to validate mnemonic for language %s", l)
 	}
 
 	return nil
 }
 
-func FromFields(args []string) string {
-	return strings.Join(
-		strings.Fields(
-			strings.Join(args, " "),
-		),
-		" ",
-	)
+// Tidy ensures that the mnemonic sentence does not have extra
+// white spaces or trailing newlines. Since mnemonic sentence
+// is used in cryptographic seed generation it is necessary
+// to make sure that same seed is generated if the fields
+// are the same irrespective of spacing between them
+func Tidy(mnemonic string) string {
+	return strings.Join(strings.Fields(mnemonic), " ")
 }

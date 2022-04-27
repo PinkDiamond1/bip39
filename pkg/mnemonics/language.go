@@ -12,6 +12,7 @@ const (
 	LanguageSpanish            = "Spanish"
 )
 
+// validLanguages are valid mnemonic languages
 var validLanguages = []string{
 	LanguageEnglish,
 	LanguageJapanese,

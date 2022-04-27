@@ -9,7 +9,8 @@ import (
 	"golang.org/x/term"
 )
 
-func Prompt(w io.Writer) (string, error) {
+// New requests a new passphrase from the user
+func New(w io.Writer) (string, error) {
 	if _, err := fmt.Fprintf(w, "Enter secret passphrase: "); err != nil {
 		return "", fmt.Errorf("failed to write to output: %w", err)
 	}
