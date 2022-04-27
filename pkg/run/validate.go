@@ -2,7 +2,6 @@ package run
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/kubetrail/bip39/pkg/flags"
 	"github.com/kubetrail/bip39/pkg/mnemonics"
@@ -26,7 +25,7 @@ func Validate(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("failed to read mnemonic from input: %w", err)
 		}
 	} else {
-		mnemonic = strings.Join(args, " ")
+		mnemonic = mnemonics.FromFields(args)
 	}
 
 	if err := mnemonics.Validate(mnemonic, language); err != nil {

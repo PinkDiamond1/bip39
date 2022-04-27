@@ -139,3 +139,12 @@ func Validate(mnemonic, language string) error {
 
 	return nil
 }
+
+func FromFields(args []string) string {
+	return strings.Join(
+		strings.Fields(
+			strings.Join(args, " "),
+		),
+		" ",
+	)
+}
