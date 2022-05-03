@@ -5,6 +5,7 @@ import (
 
 	"github.com/kubetrail/bip39/pkg/flags"
 	"github.com/kubetrail/bip39/pkg/mnemonics"
+	"github.com/kubetrail/bip39/pkg/prompts"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -19,9 +20,15 @@ func Translate(cmd *cobra.Command, args []string) error {
 	var mnemonic string
 	var err error
 	if len(args) == 0 {
-		err := mnemonics.Prompt(cmd.OutOrStdout())
+		prompt, err := prompts.Status()
 		if err != nil {
-			return fmt.Errorf("failed to prompt for mnemonic: %w", err)
+			return fmt.Errorf("failed to get prompt status: %w", err)
+		}
+
+		if prompt {
+			if err := mnemonics.Prompt(cmd.OutOrStdout()); err != nil {
+				return fmt.Errorf("failed to prompt for mnemonic: %w", err)
+			}
 		}
 
 		mnemonic, err = mnemonics.Read(cmd.InOrStdin())

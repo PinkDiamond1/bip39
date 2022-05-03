@@ -16,9 +16,15 @@ func Validate(cmd *cobra.Command, args []string) error {
 
 	var mnemonic string
 	if len(args) == 0 {
-		err := mnemonics.Prompt(cmd.OutOrStdout())
+		prompt, err := prompts.Status()
 		if err != nil {
-			return fmt.Errorf("failed to prompt for mnemonic: %w", err)
+			return fmt.Errorf("failed to get prompt status: %w", err)
+		}
+
+		if prompt {
+			if err := mnemonics.Prompt(cmd.OutOrStdout()); err != nil {
+				return fmt.Errorf("failed to prompt for mnemonic: %w", err)
+			}
 		}
 
 		mnemonic, err = mnemonics.Read(cmd.InOrStdin())
