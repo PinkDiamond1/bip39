@@ -19,6 +19,7 @@ func New(w io.Writer) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to read secret passphrase from input: %w", err)
 	}
+
 	if _, err := fmt.Fprintln(w); err != nil {
 		return "", fmt.Errorf("failed to write to output: %w", err)
 	}
@@ -52,6 +53,10 @@ func Prompt(w io.Writer) (string, error) {
 	passphrase, err := term.ReadPassword(syscall.Stdin)
 	if err != nil {
 		return "", fmt.Errorf("failed to read secret passphrase from input: %w", err)
+	}
+
+	if _, err := fmt.Fprintln(w); err != nil {
+		return "", fmt.Errorf("failed to write to output: %w", err)
 	}
 
 	return string(passphrase), nil
