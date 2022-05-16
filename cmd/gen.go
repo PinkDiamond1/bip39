@@ -51,4 +51,5 @@ func init() {
 
 	f.Int(flags.Length, 24, "Number of words")
 	f.String(flags.Language, "English", "Language")
+	f.String(flags.Entropy, "", "Entropy as hex string (overrides length arg)")
 }

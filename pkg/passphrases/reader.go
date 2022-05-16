@@ -42,3 +42,17 @@ func New(w io.Writer) (string, error) {
 
 	return string(passphrase), nil
 }
+
+// Prompt prompts for passphrase entry
+func Prompt(w io.Writer) (string, error) {
+	if _, err := fmt.Fprintf(w, "Enter secret passphrase: "); err != nil {
+		return "", fmt.Errorf("failed to write to output: %w", err)
+	}
+
+	passphrase, err := term.ReadPassword(syscall.Stdin)
+	if err != nil {
+		return "", fmt.Errorf("failed to read secret passphrase from input: %w", err)
+	}
+
+	return string(passphrase), nil
+}

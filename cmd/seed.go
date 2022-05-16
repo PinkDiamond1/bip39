@@ -55,4 +55,5 @@ func init() {
 	f.String(flags.Language, "English", "Language")
 	f.Bool(flags.UsePassphrase, false, "Use passphrase")
 	f.Bool(flags.SkipMnemonicValidation, false, "Skip mnemonic validation")
+	f.Bool(flags.Short, false, "Generate 32 bytes seed instead of 64")
 }

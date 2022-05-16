@@ -79,6 +79,28 @@ func NewFromFields(fields []string) string {
 	)
 }
 
+// NewFromEntropy generates new mnemonic sequence from a valid
+// length of entropy bytes. Valid lengths are
+// 16, 20, 24, 28, 32.
+func NewFromEntropy(entropy []byte, language string) (string, error) {
+	if err := SetLanguage(language); err != nil {
+		return "", fmt.Errorf("failed to set language: %w", err)
+	}
+
+	switch len(entropy) {
+	case 16, 20, 24, 28, 32:
+	default:
+		return "", fmt.Errorf("entropy length must be 16, 20, 24, 28 or 32, got %d", len(entropy))
+	}
+
+	mnemonic, err := bip39.NewMnemonic(entropy)
+	if err != nil {
+		return "", fmt.Errorf("failed to generate new mnemonic: %w", err)
+	}
+
+	return mnemonic, nil
+}
+
 // Prompt prompts for new mnemonic
 func Prompt(w io.Writer) error {
 	if _, err := fmt.Fprintf(w, "Enter mnemonic: "); err != nil {
