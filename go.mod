@@ -4,10 +4,10 @@ go 1.18
 
 require (
 	github.com/spf13/cobra v1.4.0
-	github.com/spf13/viper v1.11.0
+	github.com/spf13/viper v1.12.0
 	github.com/tyler-smith/go-bip39 v1.1.0
-	golang.org/x/term v0.0.0-20220411215600-e5f449aeb171
-	gopkg.in/yaml.v3 v3.0.0-20220512140231-539c8e751b99
+	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -22,10 +22,10 @@ require (
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/subosito/gotenv v1.2.0 // indirect
-	golang.org/x/crypto v0.0.0-20220513210258-46612604a0f9 // indirect
-	golang.org/x/sys v0.0.0-20220513210249-45d2b4557a2a // indirect
+	github.com/subosito/gotenv v1.3.0 // indirect
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
+	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect
-	gopkg.in/ini.v1 v1.66.4 // indirect
+	gopkg.in/ini.v1 v1.66.5 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
