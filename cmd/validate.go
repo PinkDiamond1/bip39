@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"github.com/kubetrail/bip39/pkg/flags"
+	"github.com/kubetrail/bip39/pkg/mnemonics"
 	"github.com/kubetrail/bip39/pkg/run"
 	"github.com/spf13/cobra"
 )
@@ -58,5 +59,30 @@ in between fields are ignored.
 func init() {
 	rootCmd.AddCommand(validateCmd)
 	f := validateCmd.Flags()
-	f.String(flags.Language, "English", "Language")
+	f.String(flags.Language, mnemonics.LanguageEnglish, "Language")
+
+	_ = validateCmd.RegisterFlagCompletionFunc(
+		flags.Language,
+		func(
+			cmd *cobra.Command,
+			args []string,
+			toComplete string,
+		) (
+			[]string,
+			cobra.ShellCompDirective,
+		) {
+			return []string{
+					mnemonics.LanguageEnglish,
+					mnemonics.LanguageJapanese,
+					mnemonics.LanguageChineseSimplified,
+					mnemonics.LanguageChineseTraditional,
+					mnemonics.LanguageCzech,
+					mnemonics.LanguageFrench,
+					mnemonics.LanguageItalian,
+					mnemonics.LanguageKorean,
+					mnemonics.LanguageSpanish,
+				},
+				cobra.ShellCompDirectiveDefault
+		},
+	)
 }
